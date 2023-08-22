@@ -1,5 +1,8 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { calculateSpeed, mpsToKph } from '@/utils/speed'
+import { secToHHMMSS } from '@/utils/time'
+import { calculatePace, paceElements, pacetoSperKm } from '@/utils/pace'
 
 type Data = {
   distance: number // distance in metres
@@ -36,22 +39,20 @@ export const useRunningDataStore = defineStore('runningData', () => {
   const data = ref<Data>(defaultData)
 
   const derivedData = computed<DerivedData>(() => {
-    const hh = Math.floor(data.value.time / 3600)
-    const mm = Math.floor((data.value.time - hh * 3600) / 60)
-    const ss = data.value.time - hh * 3600 - mm * 60
+    const { hh, mm, ss } = secToHHMMSS(data.value.time)
 
-    const paceSM = data.value.time / data.value.distance // pace s / m = time s / distance m
-    const paceSperKm = paceSM * 1000 // s / km
-    const paceMinutes = Math.floor(paceSperKm / 60)
-    const paceSeconds = Math.floor(paceSperKm % 60)
+    const paceSM = calculatePace(data.value.distance, data.value.time) // pace s / m = time s / distance m
+    const paceSperKm = pacetoSperKm(paceSM) // s / km
+    const { minutes, seconds } = paceElements(paceSperKm)
 
+    const speed = calculateSpeed(data.value.distance, data.value.time)
     return {
       time: { hh, mm, ss },
-      speed: data.value.distance / data.value.time,
-      speedKmH: (data.value.distance / data.value.time) * 3.6,
+      speed,
+      speedKmH: mpsToKph(speed),
       pace: {
-        minutes: paceMinutes,
-        seconds: paceSeconds,
+        minutes: minutes,
+        seconds: seconds,
         perKm: paceSperKm,
         perM: paceSM
       }
@@ -92,7 +93,7 @@ export const useRunningDataStore = defineStore('runningData', () => {
       console.log()
       data.value = {
         ...data.value,
-        distance: timeInSec * derivedData.value.speed,
+        distance: Math.round(timeInSec * derivedData.value.speed),
         time: timeInSec
       }
     } else {
