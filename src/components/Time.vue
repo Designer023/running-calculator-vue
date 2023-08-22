@@ -7,7 +7,7 @@ import { useRunningDataStore } from '@/stores/runningData'
 import { hhmmssToSec } from '@/utils/hhmmssToSec'
 
 const store = useRunningDataStore()
-const { updateTime, toggleLockTime } = store
+const { updateTime } = store
 const { data, derivedData } = storeToRefs(store)
 
 const updateValues = (event) => {
@@ -68,25 +68,6 @@ const updateValues = (event) => {
         :value="derivedData.time.ss"
         :onInput="updateValues"
       />
-    </div>
-
-    <div class="ml-auto mt-3 md:mt-0">
-      <button
-        :disabled="data.timeLocked"
-        :aria-disabled="data.timeLocked"
-        class="w-32 bg-red-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded aria-disabled:bg-blue-100"
-        v-on:click="toggleLockTime"
-      >
-        Lock
-      </button>
-      <button
-        :disabled="!data.timeLocked"
-        :aria-disabled="!data.timeLocked"
-        class="w-32 bg-green-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded aria-disabled:bg-blue-100"
-        v-on:click="toggleLockTime"
-      >
-        Unlock
-      </button>
     </div>
   </div>
 </template>

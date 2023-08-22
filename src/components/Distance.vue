@@ -5,16 +5,20 @@ import Input from '@/components/Input.vue'
 import { useRunningDataStore } from '@/stores/runningData'
 
 const store = useRunningDataStore()
-const { updateDistance, toggleLockDistance } = store
+const { updateDistance } = store
 const { data } = storeToRefs(store)
 
 const presetOptions = [
   { value: undefined, label: 'Select a preset' },
-  { value: 5000, label: '5km' },
+  { value: 5000, label: '5km / ParkRun' },
   { value: 10000, label: '10km' },
+  { value: 20000, label: '20km' },
+  { value: 30000, label: '30km' },
   { value: 21097, label: 'Half marathon' },
   { value: 42195, label: 'Marathon' },
-  { value: 50000, label: '50km' }
+  { value: 50000, label: '50km' },
+  { value: 100000, label: '100km' }
+  // todo: add more presets
 ]
 
 const updateValues = (event) => {
@@ -55,25 +59,6 @@ const updateValues = (event) => {
         :onInput="updateValues"
         :step="1000"
       />
-    </div>
-
-    <div class="ml-auto mt-3 md:mt-0">
-      <button
-        :disabled="data.distanceLocked"
-        :aria-disabled="data.distanceLocked"
-        v-on:click="toggleLockDistance"
-        class="w-32 bg-red-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded aria-disabled:bg-blue-100"
-      >
-        Lock
-      </button>
-      <button
-        :disabled="!data.distanceLocked"
-        :aria-disabled="!data.distanceLocked"
-        v-on:click="toggleLockDistance"
-        class="w-32 bg-green-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded aria-disabled:bg-blue-100"
-      >
-        Unlock
-      </button>
     </div>
   </div>
 </template>

@@ -5,11 +5,49 @@ import Distance from '@/components/Distance.vue'
 import Time from '@/components/Time.vue'
 import Speed from '@/components/Speed.vue'
 import Pace from '@/components/Pace.vue'
+import ToggleBar from '@/components/ToggleBar.vue'
+import { useRunningDataStore } from '@/stores/runningData'
+import { storeToRefs } from 'pinia'
+
+const store = useRunningDataStore()
+const { setTargetField } = store
+const { data } = storeToRefs(store)
+
+const options = [
+  {
+    label: 'Distance',
+    value: 'distance'
+  },
+  {
+    label: 'Time',
+    value: 'time'
+  },
+  {
+    label: 'Pace',
+    value: 'pace'
+  }
+]
+
+const selected = data.value.targetField
+
+function onChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  const { value } = target
+  setTargetField(value)
+}
 </script>
 
 <template>
   <div class="container mx-auto">
     <h1 class="text-4xl mb-6 mt-2">Running pace calculator</h1>
+
+    <ToggleBar
+      :options="options"
+      :selected="selected"
+      :onChange="onChange"
+      name="targetField"
+      verboseName="Calculate:"
+    />
 
     <form class="w-full">
       <div class="md:flex md:items-center mb-6 flex-col">
@@ -22,8 +60,6 @@ import Pace from '@/components/Pace.vue'
           <template v-slot:title>Time</template>
           <template v-slot:content><Time /></template>
         </Panel>
-
-        <Warning text="Either distance or time must be locked to edit pace or speed." />
 
         <Panel>
           <template v-slot:title>Speed</template>

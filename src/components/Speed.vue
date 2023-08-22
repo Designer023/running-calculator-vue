@@ -5,7 +5,7 @@ import Input from '@/components/Input.vue'
 import { computed } from 'vue'
 
 const store = useRunningDataStore()
-const { updateTime, updateDistance } = store
+const { updateSpeed } = store
 const { data, derivedData } = storeToRefs(store)
 
 const disabled = computed(() => {
@@ -33,13 +33,7 @@ const updateValues = (event) => {
       break
   }
 
-  if (data.value.distanceLocked) {
-    // update time
-    updateTime(Math.round(data.value.distance / speed)) // round to the nearest second
-  } else if (data.value.timeLocked) {
-    // update distance
-    updateDistance(Math.round(speed * data.value.time)) // round to the nearest meter
-  }
+  updateSpeed(speed)
 }
 </script>
 
